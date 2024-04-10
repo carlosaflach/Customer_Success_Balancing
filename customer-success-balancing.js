@@ -5,6 +5,20 @@
  * @param {array} customerSuccessAway
  */
 const logger = (message) => console.log(message);
+const findCSWithMoreCustomers = (customerSuccess) => {
+  let maxCustomers = 0;
+  let cssIdWithMostCustomers = 0;
+  for (let { id, attendToCustomers } of customerSuccess) {
+    const count = attendToCustomers.length;
+    if (count > maxCustomers) {
+      maxCustomers = count;
+      cssIdWithMostCustomers = id;
+    } else if (count === maxCustomers) {
+      cssIdWithMostCustomers = 0;
+    }
+  }
+  return cssIdWithMostCustomers;
+}
 function customerSuccessBalancing(
   customerSuccess,
   customers,
@@ -15,10 +29,13 @@ function customerSuccessBalancing(
     logger(`It's not allowed to have more than ${maxCssAbstentionAllowed} abstentions`);
     return;
   }
+
   const sortedAvailableCSByAscScore = customerSuccess.filter((cs) => !customerSuccessAway.includes(cs.id)).map(css => ({ ...css, attendToCustomers: [] })).sort((a, b) => a.score - b.score);
+
   const sortedCustomerAscByScore = [...customers].sort((a, b) => a.score - b.score);
 
   const attendedCustomerIds = new Set();
+
   sortedCustomerAscByScore.forEach(customer => {
     const suitableCss = sortedAvailableCSByAscScore.find(cs => cs.score >= customer.score && !attendedCustomerIds.has(customer.id))
     if (suitableCss) {
@@ -27,7 +44,7 @@ function customerSuccessBalancing(
     }
   });
 
-
+  return findCSWithMoreCustomers(sortedAvailableCSByAscScore);
 }
 
 // DATA EXAMPLE
