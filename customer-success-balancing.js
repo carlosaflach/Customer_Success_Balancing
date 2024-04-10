@@ -24,7 +24,6 @@ function customerSuccessBalancing(
   customers,
   customerSuccessAway
 ) {
-  const startTime = performance.now();
   const maxCssAbstentionAllowed = Math.floor(customerSuccess.length / 2);
   if (customerSuccessAway.length > maxCssAbstentionAllowed) {
     logger(`It's not allowed to have more than ${maxCssAbstentionAllowed} abstentions`);
@@ -59,14 +58,7 @@ function customerSuccessBalancing(
     }
   }
 
-  const endTime = performance.now();
-  logger(`Execution time: ${endTime - startTime} ms`);
-  // Initial Solution => 100 ~ 115 ms in test scenario 3
-  // First Attempt Solution => 80 ~ 105 ms in test scenario 3
-  // Second Attempt Solution => 3 ~ 10 ms in test scenario 3
-
   return customerSuccesIdWithMaxAttendances;
-
 }
 
 test("Scenario 1", () => {
