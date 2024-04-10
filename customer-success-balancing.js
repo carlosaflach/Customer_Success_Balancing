@@ -35,26 +35,6 @@ function customerSuccessBalancing(
 
   const sortedCustomerAscByScore = [...customers].sort((a, b) => a.score - b.score);
 
-  // const attendedCustomerIds = new Set();
-
-  // sortedCustomerAscByScore.forEach(customer => {
-  //   const suitableCss = sortedAvailableCSByAscScore.find(cs => cs.score >= customer.score && !attendedCustomerIds.has(customer.id));
-  //   if (suitableCss) {
-  //     suitableCss.attendToCustomers.push(customer.id);
-  //     attendedCustomerIds.add(customer.id);
-  //   }
-  // });
-
-  // for (const customer of customers) {
-  //   for (const css of sortedAvailableCSByAscScore) {
-  //     if (css.score >= customer.score && !attendedCustomerIds.has(customer.id)) {
-  //       css.attendToCustomers.push(customer.id);
-  //       attendedCustomerIds.add(customer.id);
-  //       break;
-  //     }
-  //   }
-  // }
-
   const customerSuccessAttendance = new Map();
   let csCurrentIndex = 0;
 
@@ -67,8 +47,6 @@ function customerSuccessBalancing(
       customerSuccessAttendance.set(sortedAvailableCSByAscScore[csCurrentIndex].id, (customerSuccessAttendance.get(sortedAvailableCSByAscScore[csCurrentIndex].id) || 0) + 1);
     }
   }
-
-  // const csWithMoreCustomers = findCSWithMoreCustomers(sortedAvailableCSByAscScore);
 
   let maxAttendances = 0;
   let customerSuccesIdWithMaxAttendances = 0;
@@ -88,27 +66,8 @@ function customerSuccessBalancing(
   // Second Attempt Solution => 3 ~ 10 ms in test scenario 3
 
   return customerSuccesIdWithMaxAttendances;
-  // return csWithMoreCustomers;
+
 }
-
-// // DATA EXAMPLE
-// const css = [
-//   { id: 1, score: 60 },
-//   { id: 2, score: 20 },
-//   { id: 3, score: 95 },
-//   { id: 4, score: 75 },
-// ];
-// const customers = [
-//   { id: 1, score: 90 },
-//   { id: 2, score: 20 },
-//   { id: 3, score: 70 },
-//   { id: 4, score: 40 },
-//   { id: 5, score: 60 },
-//   { id: 6, score: 10 },
-// ];
-// const csAway = [2, 4];
-
-// customerSuccessBalancing(css, customers, csAway)
 
 test("Scenario 1", () => {
   const css = [
