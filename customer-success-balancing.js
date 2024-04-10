@@ -37,18 +37,30 @@ function customerSuccessBalancing(
 
   const attendedCustomerIds = new Set();
 
-  sortedCustomerAscByScore.forEach(customer => {
-    const suitableCss = sortedAvailableCSByAscScore.find(cs => cs.score >= customer.score && !attendedCustomerIds.has(customer.id));
-    if (suitableCss) {
-      suitableCss.attendToCustomers.push(customer.id);
-      attendedCustomerIds.add(customer.id);
+  // sortedCustomerAscByScore.forEach(customer => {
+  //   const suitableCss = sortedAvailableCSByAscScore.find(cs => cs.score >= customer.score && !attendedCustomerIds.has(customer.id));
+  //   if (suitableCss) {
+  //     suitableCss.attendToCustomers.push(customer.id);
+  //     attendedCustomerIds.add(customer.id);
+  //   }
+  // });
+
+  for (const customer of customers) {
+    for (const css of sortedAvailableCSByAscScore) {
+      if (css.score >= customer.score && !attendedCustomerIds.has(customer.id)) {
+        css.attendToCustomers.push(customer.id);
+        attendedCustomerIds.add(customer.id);
+        break;
+      }
     }
-  });
+  }
 
   const csWithMoreCustomers = findCSWithMoreCustomers(sortedAvailableCSByAscScore);
 
   const endTime = performance.now();
   logger(`Execution time: ${endTime - startTime} ms`);
+  // Initial Solution => 100 ~ 115 ms in test scenario 3
+  // First Attempt Solution => 80 ~ 105 ms in test scenario 3
 
   return csWithMoreCustomers;
 }
