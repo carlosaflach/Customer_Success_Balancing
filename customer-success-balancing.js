@@ -7,17 +7,17 @@
 const logger = (message) => console.log(message);
 const findCSWithMoreCustomers = (customerSuccess) => {
   let maxCustomers = 0;
-  let cssIdWithMostCustomers = 0;
+  let csIdWithMoreCustomers = 0;
   for (let { id, attendToCustomers } of customerSuccess) {
     const count = attendToCustomers.length;
     if (count > maxCustomers) {
       maxCustomers = count;
-      cssIdWithMostCustomers = id;
+      csIdWithMoreCustomers = id;
     } else if (count === maxCustomers) {
-      cssIdWithMostCustomers = 0;
+      csIdWithMoreCustomers = 0;
     }
   }
-  return cssIdWithMostCustomers;
+  return csIdWithMoreCustomers;
 }
 function customerSuccessBalancing(
   customerSuccess,
