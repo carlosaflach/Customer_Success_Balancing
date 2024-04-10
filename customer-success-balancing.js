@@ -35,7 +35,7 @@ function customerSuccessBalancing(
 
   const sortedCustomerAscByScore = [...customers].sort((a, b) => a.score - b.score);
 
-  const attendedCustomerIds = new Set();
+  // const attendedCustomerIds = new Set();
 
   // sortedCustomerAscByScore.forEach(customer => {
   //   const suitableCss = sortedAvailableCSByAscScore.find(cs => cs.score >= customer.score && !attendedCustomerIds.has(customer.id));
@@ -45,24 +45,50 @@ function customerSuccessBalancing(
   //   }
   // });
 
-  for (const customer of customers) {
-    for (const css of sortedAvailableCSByAscScore) {
-      if (css.score >= customer.score && !attendedCustomerIds.has(customer.id)) {
-        css.attendToCustomers.push(customer.id);
-        attendedCustomerIds.add(customer.id);
-        break;
-      }
+  // for (const customer of customers) {
+  //   for (const css of sortedAvailableCSByAscScore) {
+  //     if (css.score >= customer.score && !attendedCustomerIds.has(customer.id)) {
+  //       css.attendToCustomers.push(customer.id);
+  //       attendedCustomerIds.add(customer.id);
+  //       break;
+  //     }
+  //   }
+  // }
+
+  const customerSuccessAttendance = new Map();
+  let csCurrentIndex = 0;
+
+  for (const customer of sortedCustomerAscByScore) {
+    while (csCurrentIndex < sortedAvailableCSByAscScore.length && sortedAvailableCSByAscScore[csCurrentIndex].score < customer.score) {
+      csCurrentIndex += 1;
+    }
+    if (csCurrentIndex < sortedAvailableCSByAscScore.length) {
+      // upsert the map value
+      customerSuccessAttendance.set(sortedAvailableCSByAscScore[csCurrentIndex].id, (customerSuccessAttendance.get(sortedAvailableCSByAscScore[csCurrentIndex].id) || 0) + 1);
     }
   }
 
-  const csWithMoreCustomers = findCSWithMoreCustomers(sortedAvailableCSByAscScore);
+  // const csWithMoreCustomers = findCSWithMoreCustomers(sortedAvailableCSByAscScore);
+
+  let maxAttendances = 0;
+  let customerSuccesIdWithMaxAttendances = 0;
+  for (const [csId, attendancesAmount] of customerSuccessAttendance.entries()) {
+    if (attendancesAmount > maxAttendances) {
+      maxAttendances = attendancesAmount;
+      customerSuccesIdWithMaxAttendances = csId;
+    } else if (attendancesAmount === maxAttendances) {
+      customerSuccesIdWithMaxAttendances = 0;
+    }
+  }
 
   const endTime = performance.now();
   logger(`Execution time: ${endTime - startTime} ms`);
   // Initial Solution => 100 ~ 115 ms in test scenario 3
   // First Attempt Solution => 80 ~ 105 ms in test scenario 3
+  // Second Attempt Solution => 3 ~ 10 ms in test scenario 3
 
-  return csWithMoreCustomers;
+  return customerSuccesIdWithMaxAttendances;
+  // return csWithMoreCustomers;
 }
 
 // // DATA EXAMPLE
