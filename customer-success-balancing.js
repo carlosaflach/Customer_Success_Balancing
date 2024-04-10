@@ -15,17 +15,18 @@ function customerSuccessBalancing(
     logger(`It's not allowed to have more than ${maxCssAbstentionAllowed} abstentions`);
     return;
   }
-  const sortedAvailableCss = customerSuccess.filter((cs) => !customerSuccessAway.includes(cs.id)).map(css => ({ ...css, attendToCustomers: [] })).sort((a, b) => a.score - b.score);
-  const sortedCustomers = [...customers].sort((a, b) => a.score - b.score);
+  const sortedAvailableCSByAscScore = customerSuccess.filter((cs) => !customerSuccessAway.includes(cs.id)).map(css => ({ ...css, attendToCustomers: [] })).sort((a, b) => a.score - b.score);
+  const sortedCustomerAscByScore = [...customers].sort((a, b) => a.score - b.score);
 
   const attendedCustomerIds = new Set();
-  sortedCustomers.forEach(c => {
-    const suitableCss = sortedAvailableCss.find(cs => cs.score >= c.score && !attendedCustomerIds.has(c.id))
+  sortedCustomerAscByScore.forEach(customer => {
+    const suitableCss = sortedAvailableCSByAscScore.find(cs => cs.score >= customer.score && !attendedCustomerIds.has(customer.id))
     if (suitableCss) {
-      suitableCss.attendToCustomers.push(c.id);
-      attendedCustomerIds.add(c.id);
+      suitableCss.attendToCustomers.push(customer.id);
+      attendedCustomerIds.add(customer.id);
     }
   });
+
 
 }
 
