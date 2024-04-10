@@ -24,6 +24,7 @@ function customerSuccessBalancing(
   customers,
   customerSuccessAway
 ) {
+  const startTime = performance.now();
   const maxCssAbstentionAllowed = Math.floor(customerSuccess.length / 2);
   if (customerSuccessAway.length > maxCssAbstentionAllowed) {
     logger(`It's not allowed to have more than ${maxCssAbstentionAllowed} abstentions`);
@@ -37,14 +38,19 @@ function customerSuccessBalancing(
   const attendedCustomerIds = new Set();
 
   sortedCustomerAscByScore.forEach(customer => {
-    const suitableCss = sortedAvailableCSByAscScore.find(cs => cs.score >= customer.score && !attendedCustomerIds.has(customer.id))
+    const suitableCss = sortedAvailableCSByAscScore.find(cs => cs.score >= customer.score && !attendedCustomerIds.has(customer.id));
     if (suitableCss) {
       suitableCss.attendToCustomers.push(customer.id);
       attendedCustomerIds.add(customer.id);
     }
   });
 
-  return findCSWithMoreCustomers(sortedAvailableCSByAscScore);
+  const csWithMoreCustomers = findCSWithMoreCustomers(sortedAvailableCSByAscScore);
+
+  const endTime = performance.now();
+  logger(`Execution time: ${endTime - startTime} ms`);
+
+  return csWithMoreCustomers;
 }
 
 // // DATA EXAMPLE
