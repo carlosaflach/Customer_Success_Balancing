@@ -64,8 +64,10 @@ Para este exemplo o retorno deve ser o id do 1 que é o CS que atende 4 clientes
 
 No terminal, execute os comandos:
 
+Com YARN:
+
 ```bash
-cd javascript
+cd Customer_Success_Balancing
 yarn
 yarn test
 ```
@@ -73,7 +75,7 @@ yarn test
 Ou usando o NPM:
 
 ```bash
-cd javascript
+cd Customer_Success_Balancing
 npm install
 npm test
 ```
