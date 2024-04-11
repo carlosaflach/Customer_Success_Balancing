@@ -4,7 +4,6 @@
  * @param {array} customers
  * @param {array} customerSuccessAway
  */
-const logger = (message) => console.log(message);
 
 const findCSWithMoreCustomers = (customerSuccessAttendance) => {
   let maxAttendances = 0;
@@ -42,8 +41,7 @@ function customerSuccessBalancing(
   const maxCssAbstentionAllowed = Math.floor(customerSuccess.length / 2);
 
   if (customerSuccessAway.length > maxCssAbstentionAllowed) {
-    logger(`It's not allowed to have more than ${maxCssAbstentionAllowed} abstentions`);
-    return;
+    return message = `It's not allowed to have more than ${maxCssAbstentionAllowed} abstentions`;
   }
 
   const sortedAvailableCSByAscScore = customerSuccess.filter((cs) => !customerSuccessAway.includes(cs.id)).map(css => ({ ...css, attendToCustomers: [] })).sort((a, b) => a.score - b.score);
@@ -164,3 +162,23 @@ test("Scenario 8", () => {
   const csAway = [2, 4];
   expect(customerSuccessBalancing(css, customers, csAway)).toEqual(1);
 });
+
+test("Scenario 9", () => {
+  const css = [
+    { id: 1, score: 60 },
+    { id: 2, score: 20 },
+    { id: 3, score: 95 },
+    { id: 4, score: 75 },
+  ];
+  const customers = [
+    { id: 1, score: 90 },
+    { id: 2, score: 20 },
+    { id: 3, score: 70 },
+    { id: 4, score: 40 },
+    { id: 5, score: 60 },
+    { id: 6, score: 10 },
+  ];
+  const csAway = [1, 2, 4];
+
+  expect(customerSuccessBalancing(css, customers, csAway)).toEqual(`It's not allowed to have more than ${Math.floor(css.length / 2)} abstentions`);
+})
