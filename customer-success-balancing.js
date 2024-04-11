@@ -5,33 +5,48 @@
  * @param {array} customerSuccessAway
  */
 const logger = (message) => console.log(message);
-const findCSWithMoreCustomers = (customerSuccess) => {
-  let maxCustomers = 0;
-  let csIdWithMoreCustomers = 0;
-  for (let { id, attendToCustomers } of customerSuccess) {
-    const count = attendToCustomers.length;
-    if (count > maxCustomers) {
-      maxCustomers = count;
-      csIdWithMoreCustomers = id;
-    } else if (count === maxCustomers) {
-      csIdWithMoreCustomers = 0;
+
+const findCSWithMoreCustomers = (customerSuccessAttendance) => {
+  let maxAttendances = 0;
+  let customerSuccessIdWithMaxAttendances = 0;
+  for (const [csId, csAttendanceAmount] of customerSuccessAttendance.entries()) {
+    if (csAttendanceAmount > maxAttendances) {
+      maxAttendances = csAttendanceAmount;
+      customerSuccessIdWithMaxAttendances = csId;
+    } else if (csAttendanceAmount === maxAttendances) {
+      customerSuccessIdWithMaxAttendances = 0;
     }
   }
-  return csIdWithMoreCustomers;
+
+  return customerSuccessIdWithMaxAttendances;
 }
+
+const upsertCustomerSuccessAttendance = (customerSuccessAttendanceMap, customerSuccess, currentCustomerSuccessIndex) => {
+  const customerSuccessId = customerSuccess[currentCustomerSuccessIndex].id;
+  const mappedCSAttendanceAmount = customerSuccessAttendanceMap.get(customerSuccessId);
+  const initialAttendanceAmount = 0;
+
+  if (!mappedCSAttendanceAmount) {
+    customerSuccessAttendanceMap.set(customerSuccessId, initialAttendanceAmount + 1);
+    return;
+  }
+
+  customerSuccessAttendanceMap.set(customerSuccessId, mappedCSAttendanceAmount + 1);
+}
+
 function customerSuccessBalancing(
   customerSuccess,
   customers,
   customerSuccessAway
 ) {
   const maxCssAbstentionAllowed = Math.floor(customerSuccess.length / 2);
+
   if (customerSuccessAway.length > maxCssAbstentionAllowed) {
     logger(`It's not allowed to have more than ${maxCssAbstentionAllowed} abstentions`);
     return;
   }
 
   const sortedAvailableCSByAscScore = customerSuccess.filter((cs) => !customerSuccessAway.includes(cs.id)).map(css => ({ ...css, attendToCustomers: [] })).sort((a, b) => a.score - b.score);
-
   const sortedCustomerAscByScore = [...customers].sort((a, b) => a.score - b.score);
 
   const customerSuccessAttendance = new Map();
@@ -42,23 +57,11 @@ function customerSuccessBalancing(
       csCurrentIndex += 1;
     }
     if (csCurrentIndex < sortedAvailableCSByAscScore.length) {
-      // upsert the map value
-      customerSuccessAttendance.set(sortedAvailableCSByAscScore[csCurrentIndex].id, (customerSuccessAttendance.get(sortedAvailableCSByAscScore[csCurrentIndex].id) || 0) + 1);
+      upsertCustomerSuccessAttendance(customerSuccessAttendance, sortedAvailableCSByAscScore, csCurrentIndex);
     }
   }
 
-  let maxAttendances = 0;
-  let customerSuccesIdWithMaxAttendances = 0;
-  for (const [csId, attendancesAmount] of customerSuccessAttendance.entries()) {
-    if (attendancesAmount > maxAttendances) {
-      maxAttendances = attendancesAmount;
-      customerSuccesIdWithMaxAttendances = csId;
-    } else if (attendancesAmount === maxAttendances) {
-      customerSuccesIdWithMaxAttendances = 0;
-    }
-  }
-
-  return customerSuccesIdWithMaxAttendances;
+  return findCSWithMoreCustomers(customerSuccessAttendance);
 }
 
 test("Scenario 1", () => {
